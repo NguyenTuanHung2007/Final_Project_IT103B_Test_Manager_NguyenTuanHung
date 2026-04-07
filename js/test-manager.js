@@ -1,16 +1,17 @@
-// Test Manager - Pagination like category-manager
+// Quản lý danh sách bài test - Logic phân trang tương tự trang quản lý danh mục
 
-// 1. DOM elements
+// 1. Khai báo các phần tử DOM cần thiết
 const tableBody = document.querySelector(".responsive-table tbody");
 const deleteModal = document.getElementById("deleteModal");
 const deleteIdInput = document.getElementById("deleteId");
 const paginationWrapper = document.querySelector(".pagination-wrapper");
 
-// 2. Pagination
-let currentPage = 1;
-const ITEMS_PER_PAGE = 5;
+// 2. Các biến phục vụ logic phân trang
+let currentPage = 1; // Trang hiện tại
+const ITEMS_PER_PAGE = 5; // Số lượng bài test hiển thị trên mỗi trang
 
-// 3. Data
+// 3. Khởi tạo dữ liệu
+// Lấy danh sách bài test từ LocalStorage, nếu chưa có thì khởi tạo mảng mẫu
 let tests = JSON.parse(localStorage.getItem("tests")) || [
   {
     id: 1,
@@ -35,45 +36,58 @@ let tests = JSON.parse(localStorage.getItem("tests")) || [
   },
 ];
 
+// Hàm đồng bộ dữ liệu mảng 'tests' vào LocalStorage
 const syncStorage = () => localStorage.setItem("tests", JSON.stringify(tests));
 
-// 4. Utils
+// 4. Các hàm tiện ích
+// Hàm ẩn/hiện Modal
 const toggleModal = (modalElement, show) => {
   if (modalElement) modalElement.style.display = show ? "flex" : "none";
 };
 
-// 5. Render Pagination (copied from category-manager)
+// 5. Hàm vẽ thanh phân trang (Pagination)
+// Tính toán số trang, hiển thị các nút số, dấu '...' và xử lý sự kiện chuyển trang
 const renderPagination = () => {
   if (!paginationWrapper || !tests.length) return;
 
   const totalPages = Math.ceil(tests.length / ITEMS_PER_PAGE);
 
+  // Tạo nút mũi tên quay lại
   let html = `<button class="page-item arrow ${currentPage === 1 ? "disabled" : ""}" data-page="${currentPage - 1}"><</button>`;
 
-  const maxVisible = 5;
+  const maxVisible = 5; // Số lượng nút trang tối đa hiển thị cùng lúc
   let startPage = Math.max(1, currentPage - 2);
   let endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
+  // Điều chỉnh startPage nếu endPage chạm giới hạn cuối
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  // Hiển thị trang đầu và dấu '...' nếu cần thiết
   if (startPage > 1) {
     html += `<button class="page-item" data-page="1">1</button>`;
     if (startPage > 2) html += '<span class="page-item ellipsis">...</span>';
   }
 
+  // Hiển thị các nút số trang
   for (let i = startPage; i <= endPage; i++) {
     html += `<button class="page-item ${i === currentPage ? "active" : ""}" data-page="${i}">${i}</button>`;
   }
 
+  // Hiển thị trang cuối và dấu '...' nếu cần thiết
   if (endPage < totalPages) {
     if (endPage < totalPages - 1)
       html += '<span class="page-item ellipsis">...</span>';
     html += `<button class="page-item" data-page="${totalPages}">${totalPages}</button>`;
   }
 
+  // Nút mũi tên đi tiếp
   html += `<button class="page-item arrow ${currentPage === totalPages ? "disabled" : ""}" data-page="${currentPage + 1}">></button>`;
 
   paginationWrapper.innerHTML = html;
 
-  // Events
+  // Gán sự kiện click cho các nút phân trang
   paginationWrapper
     .querySelectorAll(".page-item:not(.disabled):not(.ellipsis)")
     .forEach((btn) => {
@@ -84,14 +98,16 @@ const renderPagination = () => {
     });
 };
 
-// 6. Render Table with Pagination
+// 6. Hàm hiển thị bảng bài test
+// Logic: Cắt mảng dữ liệu gốc theo trang hiện tại (slice) để hiển thị đúng dữ liệu
 const renderTable = (filteredTests = tests) => {
   const start = (currentPage - 1) * ITEMS_PER_PAGE;
   const end = start + ITEMS_PER_PAGE;
-  const pageData = filteredTests.slice(start, end);
+  const pageData = filteredTests.slice(start, end); // Lấy 5 phần tử cho trang hiện tại
 
   tableBody.innerHTML = "";
 
+  // Xử lý trường hợp không có dữ liệu (khi tìm kiếm không thấy bài nào)
   if (pageData.length === 0) {
     tableBody.innerHTML = `
       <tr>
@@ -104,6 +120,7 @@ const renderTable = (filteredTests = tests) => {
     return;
   }
 
+  // Duyệt dữ liệu trang hiện tại và tạo các dòng HTML
   pageData.forEach((item) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -125,25 +142,30 @@ const renderTable = (filteredTests = tests) => {
   renderPagination(filteredTests);
 };
 
-// 7. Delete logic
+// 7. Logic Xóa bài test
+// Chuẩn bị ID cần xóa và hiện modal xác nhận
 window.prepareDelete = (id) => {
   deleteIdInput.value = id;
   toggleModal(deleteModal, true);
 };
 
+// Thực hiện xóa sau khi người dùng xác nhận
 const confirmDelete = () => {
   const idToDelete = parseInt(deleteIdInput.value);
+  // Loại bỏ bài test khỏi mảng
   tests = tests.filter((t) => t.id !== idToDelete);
 
+  // Đánh lại số ID từ 1 để dữ liệu trông gọn gàng hơn
   tests.forEach((test, index) => (test.id = index + 1));
-  syncStorage();
-  currentPage = 1;
+
+  syncStorage(); // Cập nhật LocalStorage
+  currentPage = 1; // Reset về trang 1
   renderTable();
   toggleModal(deleteModal, false);
   createToast("success", "Xóa bài test thành công!");
 };
 
-// 8. Login check
+// 8. Kiểm tra quyền đăng nhập (Admin mới được vào)
 const checkLogin = () => {
   const currentUserStr = localStorage.getItem("currentUser");
   if (!currentUserStr) {
@@ -163,18 +185,21 @@ const checkLogin = () => {
   }
 };
 
-// 9. Filters
+// 9. Logic Bộ lọc và Tìm kiếm
+// Xử lý tìm kiếm theo tên và sắp xếp theo nhiều tiêu chí (Mới nhất, A-Z, Số câu hỏi, Thời gian)
 const applyFilters = () => {
   let filteredTests = [...tests];
   const searchInput = document.querySelector(".filters input");
   const sortSelect = document.querySelector(".filters select");
 
+  // Lọc theo từ khóa tìm kiếm
   if (searchInput?.value.trim()) {
     filteredTests = filteredTests.filter((test) =>
       test.name.toLowerCase().includes(searchInput.value.trim().toLowerCase()),
     );
   }
 
+  // Sắp xếp dữ liệu
   const sortValue = sortSelect?.value;
   if (sortValue === "newest") {
     filteredTests.sort((a, b) => b.id - a.id);
@@ -186,66 +211,57 @@ const applyFilters = () => {
     filteredTests.sort((a, b) => parseInt(b.time) - parseInt(a.time));
   }
 
-  currentPage = 1;
+  currentPage = 1; // Quay về trang 1 khi có bộ lọc mới
   renderTable(filteredTests);
 };
 
-// 10. Init
+// 10. Khởi tạo khi trang tải xong
 document.addEventListener("DOMContentLoaded", () => {
   checkLogin();
 
-  // Mobile menu toggle
-  const hamburger = document.querySelector('.hamburger');
-  const navbar = document.querySelector('.navbar');
-  const navLinks = document.querySelectorAll('.nav-links a');
+  // --- Xử lý Menu di động (Hamburger) ---
+  const hamburger = document.querySelector(".hamburger");
+  const navbar = document.querySelector(".navbar");
+  const navLinks = document.querySelectorAll(".nav-links a");
 
   const toggleMenu = () => {
-    navbar.classList.toggle('nav-active');
-    document.body.classList.toggle('menu-open');
-    hamburger.setAttribute('aria-expanded', navbar.classList.contains('nav-active'));
+    navbar.classList.toggle("nav-active");
+    document.body.classList.toggle("menu-open");
+    hamburger.setAttribute(
+      "aria-expanded",
+      navbar.classList.contains("nav-active"),
+    );
   };
 
   const closeMenu = () => {
-    navbar.classList.remove('nav-active');
-    document.body.classList.remove('menu-open');
-    hamburger.setAttribute('aria-expanded', 'false');
+    navbar.classList.remove("nav-active");
+    document.body.classList.remove("menu-open");
+    hamburger.setAttribute("aria-expanded", "false");
   };
 
-  if (hamburger) {
-    hamburger.addEventListener('click', toggleMenu);
-    hamburger.setAttribute('aria-expanded', 'false');
-    hamburger.setAttribute('aria-controls', 'nav-links');
-  }
+  if (hamburger) hamburger.addEventListener("click", toggleMenu);
+  navLinks.forEach((link) => link.addEventListener("click", closeMenu));
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', closeMenu);
-  });
-
-  // Close on escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && navbar.classList.contains('nav-active')) {
+  // Đóng menu khi nhấn phím Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navbar.classList.contains("nav-active"))
       closeMenu();
-    }
   });
 
+  // --- Gán sự kiện cho bộ lọc ---
   const sortSelect = document.querySelector(".filters select");
   const searchInput = document.querySelector(".filters input");
 
-  if (sortSelect) {
-    sortSelect.onchange = applyFilters;
-  }
-  if (searchInput) {
-    searchInput.oninput = applyFilters;
-  }
+  if (sortSelect) sortSelect.onchange = applyFilters;
+  if (searchInput) searchInput.oninput = applyFilters;
 
+  // --- Gán sự kiện cho Modal xóa ---
   const btnConfirmDelete = document.querySelector("#deleteModal .btn-danger");
-  if (btnConfirmDelete) {
-    btnConfirmDelete.onclick = confirmDelete;
-  }
+  if (btnConfirmDelete) btnConfirmDelete.onclick = confirmDelete;
 
   document.querySelectorAll(".close-btn, .btn-secondary").forEach((btn) => {
     btn.onclick = () => toggleModal(deleteModal, false);
   });
 
-  renderTable();
+  renderTable(); // Hiển thị dữ liệu lần đầu
 });

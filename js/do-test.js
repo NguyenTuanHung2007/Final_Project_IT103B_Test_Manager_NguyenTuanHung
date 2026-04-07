@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Mobile menu toggle (keep existing)
+  // Xử lý bật/tắt menu trên thiết bị di động
   const menuBtn = document.getElementById("menuBtn");
   const mobileMenu = document.getElementById("mobileMenu");
   if (menuBtn) {
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Login check
+  // Kiểm tra trạng thái đăng nhập: Nếu chưa đăng nhập hoặc dữ liệu lỗi thì chuyển hướng về trang login
   const currentUserStr = localStorage.getItem("currentUser");
   if (!currentUserStr) {
     window.location.href = "./login.html";
@@ -23,25 +23,25 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Globals
-  let testId = null;
-  let currentTest = null;
-  let currentQuestions = [];
-  let totalQuestions = 0;
-  let currentQuestionIndex = 0;
-  let userAnswers = {};
-  let timeLeftMs = 0;
-  let timerInterval = null;
-  let answersStorageKey = "";
+  // Khai báo các biến toàn cục để quản lý trạng thái bài thi
+  let testId = null; // ID của bài test hiện tại
+  let currentTest = null; // Thông tin chung (tên, thời gian) của bài test
+  let currentQuestions = []; // Danh sách các câu hỏi của bài test
+  let totalQuestions = 0; // Tổng số câu hỏi
+  let currentQuestionIndex = 0; // Vị trí câu hỏi hiện tại người dùng đang xem
+  let userAnswers = {}; // Lưu trữ đáp án người dùng đã chọn (Dạng: {questionId: answerIndex})
+  let timeLeftMs = 0; // Thời gian còn lại tính bằng miligiây
+  let timerInterval = null; // Biến quản lý hàm đếm ngược
+  let answersStorageKey = ""; // Khóa dùng để lưu tạm đáp án vào LocalStorage
 
-  // Format time mm:ss
+  // Hàm định dạng thời gian từ miligiây sang định dạng mm:ss để hiển thị trên giao diện
   const formatTime = (ms) => {
     const mins = Math.floor(ms / 60000);
     const secs = Math.floor((ms % 60000) / 1000);
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Load test data
+  // Hàm tải dữ liệu bài test từ LocalStorage dựa trên testId từ URL
   const loadTest = () => {
     const urlParams = new URLSearchParams(window.location.search);
     testId = parseInt(urlParams.get("testId"));
@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
+    // Lấy thông tin bài test từ mảng 'tests'
     const tests = JSON.parse(localStorage.getItem("tests") || "[]");
     currentTest = tests.find((t) => t.id === testId);
     if (!currentTest) {
@@ -59,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
+    // Lấy danh sách câu hỏi cụ thể của bài test này thông qua khóa định danh riêng
     const questionsData = JSON.parse(
       localStorage.getItem(`testQuestions_${testId}`) || "{}",
     );
@@ -70,18 +72,18 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
-    // User answers storage
+    // Khởi tạo nơi lưu trữ đáp án tạm thời để tránh mất bài khi tải lại trang
     answersStorageKey = `userAnswers_${testId}`;
     userAnswers = JSON.parse(localStorage.getItem(answersStorageKey) || "{}");
 
-    // Time
+    // Tính toán thời gian làm bài (chuyển từ phút sang miligiây)
     const minutes = parseInt(currentTest.time) || 10;
     timeLeftMs = minutes * 60 * 1000;
 
     return true;
   };
 
-  // Update timer display
+  // Cập nhật hiển thị đồng hồ đếm ngược trên giao diện
   const updateTimerDisplay = () => {
     document.getElementById("totalTime").textContent =
       `Thời gian: ${currentTest.time} phút`;
@@ -89,14 +91,14 @@ document.addEventListener("DOMContentLoaded", function () {
       `Còn lại: ${formatTime(timeLeftMs)}`;
   };
 
-  // Start countdown
+  // Bắt đầu chạy đồng hồ đếm ngược
   const startTimer = () => {
     timerInterval = setInterval(() => {
       timeLeftMs -= 1000;
       if (timeLeftMs <= 0) {
         timeLeftMs = 0;
         clearInterval(timerInterval);
-        finishTest();
+        finishTest(); // Tự động nộp bài khi hết thời gian
         return;
       }
       updateTimerDisplay();
@@ -104,12 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTimerDisplay();
   };
 
-  // Render test info
+  // Hiển thị tên bài thi lên tiêu đề
   const renderTestInfo = () => {
     document.getElementById("quizTitle").textContent = currentTest.name;
   };
 
-  // Render quick nav
+  // Vẽ danh sách các ô số câu hỏi (Navigation) giúp người dùng nhảy nhanh tới câu bất kỳ
   const renderQuickNav = () => {
     const grid = document.getElementById("questionGrid");
     grid.innerHTML = "";
@@ -119,14 +121,16 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.textContent = i;
       const q = currentQuestions[i - 1];
       const qId = q ? q.id : i;
+      // Nếu câu hỏi đã có đáp án thì đổi màu ô số
       if (userAnswers[qId] !== undefined) btn.classList.add("answered");
+      // Đánh dấu ô số câu hỏi hiện tại đang xem
       if (i === currentQuestionIndex + 1) btn.classList.add("active");
       btn.addEventListener("click", () => goToQuestion(i - 1));
       grid.appendChild(btn);
     }
   };
 
-  // Render current question
+  // Hiển thị nội dung câu hỏi và các lựa chọn đáp án hiện tại
   const renderCurrentQuestion = () => {
     const q = currentQuestions[currentQuestionIndex];
     if (!q) {
@@ -139,6 +143,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const optionsGroup = document.getElementById("optionsGroup");
     optionsGroup.innerHTML = "";
+
+    // Duyệt qua danh sách đáp án của câu hỏi và tạo các thẻ input radio
     if (q.answers && q.answers.length > 0) {
       q.answers.forEach((ans, idx) => {
         const label = document.createElement("label");
@@ -147,6 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <input type="radio" name="ans" value="${idx}" ${userAnswers[q.id] === idx ? "checked" : ""}>
           <span class="square-box"></span> ${ans.text}
         `;
+        // Lắng nghe sự kiện chọn đáp án
         label
           .querySelector("input")
           .addEventListener("change", () => saveAnswer(q.id, idx));
@@ -154,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // Nav buttons
+    // Xử lý logic ẩn/hiện và trạng thái của các nút Điều hướng (Trước/Sau)
     const prevBtn = document.getElementById("btnPrev");
     const nextBtn = document.getElementById("btnNext");
     const isFirst = currentQuestionIndex === 0;
@@ -168,12 +175,14 @@ document.addEventListener("DOMContentLoaded", function () {
     renderQuickNav();
   };
 
+  // Lưu đáp án người dùng chọn vào bộ nhớ tạm thời
   const saveAnswer = (qId, idx) => {
     userAnswers[qId] = idx;
     localStorage.setItem(answersStorageKey, JSON.stringify(userAnswers));
     renderQuickNav();
   };
 
+  // Chuyển đến một câu hỏi bất kỳ theo chỉ số (index)
   const goToQuestion = (index) => {
     currentQuestionIndex = index;
     renderCurrentQuestion();
@@ -185,9 +194,11 @@ document.addEventListener("DOMContentLoaded", function () {
     currentQuestionIndex < totalQuestions - 1 &&
     goToQuestion(currentQuestionIndex + 1);
 
+  // Xử lý nộp bài và tính toán kết quả
   const finishTest = () => {
-    clearInterval(timerInterval);
+    clearInterval(timerInterval); // Dừng đồng hồ
     let score = 0;
+    // Duyệt qua các câu hỏi và so sánh đáp án người dùng với đáp án đúng
     currentQuestions.forEach((q) => {
       if (
         userAnswers[q.id] !== undefined &&
@@ -195,6 +206,8 @@ document.addEventListener("DOMContentLoaded", function () {
       )
         score++;
     });
+
+    // Tính toán phần trăm và hiển thị lên Modal kết quả
     const percent = Math.round((score / totalQuestions) * 100);
     document.getElementById("resPercent").textContent = `${percent}%`;
     document.getElementById("resTotal").textContent = totalQuestions;
@@ -203,15 +216,18 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("resultsModal").style.display = "flex";
   };
 
+  // Thoát bài thi về trang chủ và dọn dẹp bộ nhớ tạm
   window.backToHome = () => {
     localStorage.removeItem(answersStorageKey);
     window.location.href = "./home.html";
   };
 
+  // Chơi lại bài thi: Cập nhật số lượt chơi và reset trạng thái bài làm
   window.retakeTest = () => {
     const allTests = JSON.parse(localStorage.getItem("tests") || "[]");
     const testIndex = allTests.findIndex((t) => t.id === testId);
     if (testIndex > -1) {
+      // Tăng số lượt làm bài (plays) lên 1
       allTests[testIndex].plays = (allTests[testIndex].plays || 0) + 1;
       localStorage.setItem("tests", JSON.stringify(allTests));
     }
@@ -224,15 +240,17 @@ document.addEventListener("DOMContentLoaded", function () {
     renderCurrentQuestion();
   };
 
-  // Init
+  // Khởi tạo bài thi khi trang web đã sẵn sàng
   if (loadTest()) {
     renderTestInfo();
     renderQuickNav();
     renderCurrentQuestion();
     startTimer();
+    // Gán sự kiện cho các nút điều khiển chính
     document.getElementById("btnPrev").addEventListener("click", goPrev);
     document.getElementById("btnNext").addEventListener("click", goNext);
     document.querySelector(".btn-finish").addEventListener("click", finishTest);
+    // Nhấp vào vùng ngoài Modal kết quả sẽ coi như muốn làm lại bài
     document.getElementById("resultsModal").addEventListener("click", (e) => {
       if (e.target.classList.contains("modal-overlay")) retakeTest();
     });
