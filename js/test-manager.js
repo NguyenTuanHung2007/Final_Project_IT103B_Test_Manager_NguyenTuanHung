@@ -12,7 +12,29 @@ const ITEMS_PER_PAGE = 5; // Số lượng bài test hiển thị trên mỗi tr
 
 // 3. Khởi tạo dữ liệu
 // Lấy danh sách bài test từ LocalStorage, nếu chưa có thì khởi tạo mảng mẫu
-let tests = JSON.parse(localStorage.getItem("tests")) || [];
+let tests = JSON.parse(localStorage.getItem("tests")) || [
+  {
+    id: 1,
+    name: "History Quiz",
+    category: "📚 Lịch sử",
+    questions: 15,
+    time: "10",
+  },
+  {
+    id: 2,
+    name: "Science Challenge",
+    category: "🧠 Khoa học",
+    questions: 20,
+    time: "15",
+  },
+  {
+    id: 3,
+    name: "Entertainment Trivia",
+    category: "🎤 Đời sống",
+    questions: 10,
+    time: "5",
+  },
+];
 
 // Hàm đồng bộ dữ liệu mảng 'tests' vào LocalStorage
 const syncStorage = () => localStorage.setItem("tests", JSON.stringify(tests));

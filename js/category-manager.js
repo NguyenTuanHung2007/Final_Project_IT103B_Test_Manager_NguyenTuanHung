@@ -16,7 +16,12 @@ const btnAdd = document.querySelector(".btn-add");
 
 // 2. QUẢN LÝ DỮ LIỆU
 // Khởi tạo danh sách: Ưu tiên lấy từ máy người dùng, nếu mới tinh thì dùng dữ liệu mẫu
-let categories = JSON.parse(localStorage.getItem("categories")) || [];
+let categories = JSON.parse(localStorage.getItem("categories")) || [
+  { id: 1, name: "Lịch sử", emoji: "📚" },
+  { id: 2, name: "Khoa học", emoji: "🧠" },
+  { id: 3, name: "Giải trí", emoji: "🎤" },
+  { id: 4, name: "Đời sống", emoji: "🏠" },
+];
 
 // Cấu hình phân trang
 let currentPage = 1;
