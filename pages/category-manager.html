@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizForge - Quản Lý Danh Mục</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/category-manager.css" />
+    <link rel="stylesheet" href="../css/toast.css" />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <a href="./home.html" style="text-decoration: none; color: inherit"
+            >QuizzForge</a
+          >
+        </div>
+        <nav class="nav-links">
+          <a href="./home.html">Trang chủ</a>
+          <a href="./category-manager.html" class="active">Danh mục</a>
+
+          <a href="./test-manager.html">Bài test</a>
+          <a
+            href="./login.html"
+            onclick="
+              localStorage.removeItem('currentUser');
+              return true;
+            "
+            >Đăng xuất</a
+          >
+        </nav>
+        <button class="hamburger" aria-label="Toggle menu">☰</button>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      <h1>Quản lý danh mục</h1>
+
+      <button class="btn btn-primary btn-add">Thêm danh mục</button>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 10%">ID</th>
+              <th style="width: 70%">Tên danh mục</th>
+              <th class="text-center" style="width: 20%">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="categoryTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-wrapper">
+          <button class="page-item disabled arrow">&lt;</button>
+          <button class="page-item active">1</button>
+          <button class="page-item">2</button>
+          <button class="page-item">3</button>
+          <button class="page-item arrow">&gt;</button>
+        </div>
+      </div>
+    </main>
+
+    <footer>© 2025 Quiz App. All rights reserved.</footer>
+
+    <div id="categoryModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Thêm danh mục</h2>
+          <span class="close-btn">&times;</span>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editCategoryId" />
+          <div class="form-group">
+            <label>Tên danh mục</label>
+            <input
+              type="text"
+              id="categoryName"
+              placeholder="Nhập tên danh mục"
+            />
+            <span id="error-msg" class="error-text"
+              >Tên danh mục đã tồn tại</span
+            >
+          </div>
+          <div class="form-group">
+            <label>Emoji</label>
+            <input type="text" id="categoryEmoji" placeholder="Ví dụ: 🏠" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancel">Huỷ</button>
+          <button class="btn btn-primary-modal" id="btnSave">Lưu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal-content delete-modal-content">
+        <div class="modal-header">
+          <h2>Xác nhận xoá</h2>
+          <span class="close-btn" onclick="toggleDeleteModal(false)"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <p>Bạn chắc chắn muốn xoá danh mục này?</p>
+          <input type="hidden" id="deleteId" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="toggleDeleteModal(false)">
+            Huỷ
+          </button>
+          <button class="btn btn-danger" onclick="confirmDelete()">Xoá</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="../js/category-manager.js"></script>
+    <script src="../js/toast.js"></script>
+  </body>
+</html>

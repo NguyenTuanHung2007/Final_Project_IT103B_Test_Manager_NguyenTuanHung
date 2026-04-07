@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizzForge - Quản lý bài test</title>
+    <link rel="stylesheet" href="../css/test-manager.css" />
+    <link rel="stylesheet" href="../css/toast.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Quicksand:wght@300..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <a href="./home.html" style="text-decoration: none; color: inherit"
+            >QuizzForge</a
+          >
+        </div>
+        <nav class="nav-links">
+          <a href="./home.html">Trang chủ</a>
+          <a href="./category-manager.html">Danh mục</a>
+
+          <a href="./test-manager.html" class="active">Bài test</a>
+          <a
+            href="./login.html"
+            onclick="
+              localStorage.removeItem('currentUser');
+              return true;
+            "
+            >Đăng xuất</a
+          >
+        </nav>
+        <button class="hamburger" aria-label="Toggle menu">☰</button>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      <h1>Quản lý bài test</h1>
+      <div class="toolbar">
+        <a
+          href="./add-test.html"
+          class="btn btn-primary"
+          style="text-decoration: none"
+          >Thêm bài test</a
+        >
+        <div class="filters">
+          <select class="form-control">
+            <option value="">Sắp xếp theo</option>
+            <option value="newest">Mới nhất</option>
+            <option value="az">Tên A-Z</option>
+            <option value="questions">Số câu hỏi</option>
+            <option value="time">Thời gian</option>
+          </select>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Tìm kiếm theo tên"
+          />
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th style="width: 50px" class="text-center">ID</th>
+              <th>Tên bài test</th>
+              <th>Danh mục</th>
+              <th>Số câu hỏi</th>
+              <th>Thời gian</th>
+              <th style="width: 150px" class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center" data-label="ID">1</td>
+              <td data-label="Tên bài test">History Quiz</td>
+              <td data-label="Danh mục">📚 Lịch sử</td>
+              <td data-label="Số câu hỏi">15</td>
+              <td data-label="Thời gian">10 min</td>
+              <td class="text-center" data-label="Hành động">
+                <div class="action-group">
+                  <button class="btn btn-edit">Sửa</button>
+                  <button class="btn btn-delete">Xoá</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center" data-label="ID">2</td>
+              <td data-label="Tên bài test">Science Challenge</td>
+              <td data-label="Danh mục">🧠 Khoa học</td>
+              <td data-label="Số câu hỏi">20</td>
+              <td data-label="Thời gian">15 min</td>
+              <td class="text-center" data-label="Hành động">
+                <div class="action-group">
+                  <button class="btn btn-edit">Sửa</button>
+                  <button class="btn btn-delete">Xoá</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center" data-label="ID">3</td>
+              <td data-label="Tên bài test">Entertainment Trivia</td>
+              <td data-label="Danh mục">🎤 Đời sống</td>
+              <td data-label="Số câu hỏi">10</td>
+              <td data-label="Thời gian">5 min</td>
+              <td class="text-center" data-label="Hành động">
+                <div class="action-group">
+                  <button class="btn btn-edit">Sửa</button>
+                  <button class="btn btn-delete">Xoá</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-wrapper">
+          <button class="page-item disabled arrow">&lt;</button>
+          <button class="page-item active">1</button>
+          <button class="page-item">2</button>
+          <button class="page-item">3</button>
+          <button class="page-item arrow">&gt;</button>
+        </div>
+      </div>
+    </main>
+
+    <footer>© 2025 Quiz App. All rights reserved.</footer>
+
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal-content delete-modal-content">
+        <div class="modal-header">
+          <h2>Xác nhận xoá</h2>
+          <span class="close-btn" onclick="toggleDeleteModal(false)"
+            >&times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <p>Bạn chắc chắn muốn xoá bài test này?</p>
+          <input type="hidden" id="deleteId" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="toggleDeleteModal(false)">
+            Huỷ
+          </button>
+          <button class="btn btn-danger" onclick="confirmDelete()">Xoá</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="../js/test-manager.js"></script>
+    <script src="../js/toast.js"></script>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizzForge - Trang chủ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/toast.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">QuizzForge</div>
+      <div class="search-bar">
+        <input type="text" placeholder="Tìm kiếm bài test" />
+      </div>
+      <button class="hamburger" aria-label="Toggle menu">☰</button>
+      <nav>
+        <a href="./home.html">Trang chủ</a>
+        <a
+          href="./login.html"
+          onclick="
+            localStorage.removeItem('currentUser');
+            return true;
+          "
+          >Đăng xuất</a
+        >
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Hãy thử 1 câu đố ngẫu nhiên 🎲</h1>
+      <button class="btn-play-random">Play</button>
+    </section>
+
+    <main class="container">
+      <h2 class="section-title">⭐ Các câu đố nổi bật</h2>
+
+      <div class="filter-bar">
+        <span>Sắp xếp theo:</span>
+        <button class="btn-filter">Lượt chơi tăng dần</button>
+        <button class="btn-filter">Lượt chơi giảm dần</button>
+      </div>
+
+      <div class="quiz-grid">
+        <div class="quiz-card">
+          <div class="quiz-image">
+            <img src="../assets/images/Image.png" alt="Quiz" />
+          </div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-image">
+            <img src="../assets/images/Image.png" alt="Quiz" />
+          </div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-image"><img src="../assets/images/Image.png" /></div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-image"><img src="../assets/images/Image.png" /></div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-image"><img src="../assets/images/Image.png" /></div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-image"><img src="../assets/images/Image.png" /></div>
+          <div class="quiz-info">
+            <div class="category">🏠 Đời sống</div>
+            <div class="quiz-title">Thách thức sự hiểu biết của bạn</div>
+            <div class="stats">15 câu hỏi - 2 lượt chơi</div>
+          </div>
+          <button class="btn-card-play">Chơi</button>
+        </div>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-wrapper">
+          <button class="page-item disabled arrow">&lt;</button>
+          <button class="page-item active">1</button>
+          <button class="page-item">2</button>
+          <button class="page-item">3</button>
+          <button class="page-item arrow">&gt;</button>
+        </div>
+      </div>
+    </main>
+
+    <footer>© 2025 Quiz App. All rights reserved.</footer>
+
+    <div id="toast-container"></div>
+
+    <script src="../js/home.js"></script>
+    <script src="../js/toast.js"></script>
+  </body>
+</html>
