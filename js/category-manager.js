@@ -1,4 +1,4 @@
-// 1. KHAI BÁO CÁC PHẦN TỬ DOM (Document Object Model)
+// 1. KHAI BÁO CÁC PHẦN TỬ DOM
 const tableBody = document.getElementById("categoryTableBody");
 // Modal Thêm/Sửa: Dùng chung một form, thay đổi tiêu đề dựa trên tác vụ
 const modal = document.getElementById("categoryModal");
@@ -14,7 +14,7 @@ const deleteIdInput = document.getElementById("deleteId");
 
 const btnAdd = document.querySelector(".btn-add");
 
-// 2. QUẢN LÝ DỮ LIỆU (LOCAL STORAGE)
+// 2. QUẢN LÝ DỮ LIỆU
 // Khởi tạo danh sách: Ưu tiên lấy từ máy người dùng, nếu mới tinh thì dùng dữ liệu mẫu
 let categories = JSON.parse(localStorage.getItem("categories")) || [
   { id: 1, name: "Lịch sử", emoji: "📚" },
