@@ -13,6 +13,7 @@ const ITEMS_PER_PAGE = 5; // Số lượng bài test hiển thị trên mỗi tr
 // 3. Khởi tạo dữ liệu
 // Lấy danh sách bài test từ LocalStorage, nếu chưa có thì khởi tạo mảng mẫu
 let tests = JSON.parse(localStorage.getItem("tests")) || [
+  // Fix cứng dữ liệu, nếu thầy muốn chuẩn hơn thì xóa dữ liệu mẫu đi và làm bằng tay ạ
   {
     id: 1,
     name: "History Quiz",

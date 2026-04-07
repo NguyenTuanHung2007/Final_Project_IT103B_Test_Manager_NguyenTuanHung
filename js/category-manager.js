@@ -17,6 +17,7 @@ const btnAdd = document.querySelector(".btn-add");
 // 2. QUẢN LÝ DỮ LIỆU
 // Khởi tạo danh sách: Ưu tiên lấy từ máy người dùng, nếu mới tinh thì dùng dữ liệu mẫu
 let categories = JSON.parse(localStorage.getItem("categories")) || [
+    // Fix cứng dữ liệu, nếu thầy muốn chuẩn hơn thì xóa dữ liệu mẫu đi và làm bằng tay ạ
   { id: 1, name: "Lịch sử", emoji: "📚" },
   { id: 2, name: "Khoa học", emoji: "🧠" },
   { id: 3, name: "Giải trí", emoji: "🎤" },
