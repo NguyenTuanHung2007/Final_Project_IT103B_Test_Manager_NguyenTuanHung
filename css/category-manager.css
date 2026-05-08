@@ -398,7 +398,7 @@ footer {
   }
 
   .nav-links {
-    display: none;
+    display: flex; /* Không dùng display: none nữa */
     position: fixed;
     top: 0;
     left: 0;
@@ -408,27 +408,32 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
     padding: 20px;
-    z-index: 999;
-    transform: translateX(-100%);
+    z-index: 1000;
+    
+    /* Hiệu ứng ẩn/hiện mượt mà */
+    transform: translateY(-100%); /* Trượt từ trên xuống hoặc dùng translateX tùy ý */
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    visibility: hidden; 
+    pointer-events: none; /* Khi ẩn thì không nhận click */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
 
   .navbar.nav-active .nav-links {
-    display: flex;
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Khi hiện thì cho phép click vào các link */
   }
-
   .nav-links a {
     margin-left: 0;
-    font-size: 18px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    width: 200px;
+    font-size: 20px;
+    padding: 15px;
+    width: 80%;
     text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 
   .nav-links a:hover {

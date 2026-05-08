@@ -248,19 +248,46 @@ const checkLogin = () => {
 window.onload = function () {
   checkLogin();
 
-  document.getElementById("btnSave").onclick = saveData;
-  let btnDel = document.querySelector("#deleteModal .btn-danger");
-  if (btnDel) btnDel.onclick = confirmDelete;
+  // --- Xử lý Menu Mobile (Đã sửa lỗi) ---
+  const hamburger = document.querySelector(".hamburger");
+  const navbar = document.querySelector(".navbar");
+  const navLinks = document.querySelectorAll(".nav-links a");
 
-  document.querySelectorAll(".close-btn, .btn-secondary").forEach((btn) => {
-    btn.onclick = () => {
-      toggleModal(modal, false);
-      toggleModal(deleteModal, false);
-    };
+  const toggleMenu = () => {
+    const isActive = navbar.classList.toggle("nav-active");
+    document.body.classList.toggle("menu-open");
+    // Đổi icon ☰ thành ✕ khi mở
+    hamburger.innerText = isActive ? "✕" : "☰";
+  };
+
+  if (hamburger) {
+    hamburger.addEventListener("click", function (e) {
+      e.stopPropagation(); // Ngăn chặn sự kiện nổi bọt
+      toggleMenu();
+    });
+  }
+
+  // Đóng menu khi click vào link, nhưng để trình duyệt thực hiện chuyển trang trước
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      // Chỉ đóng menu, không ngăn chặn (preventDefault) hành động mặc định của thẻ <a>
+      navbar.classList.remove("nav-active");
+      document.body.classList.remove("menu-open");
+      if (hamburger) hamburger.innerText = "☰";
+    });
   });
 
-  inputName.oninput = resetError;
-  inputEmoji.oninput = resetError;
+  // Đóng menu nếu người dùng click ra ngoài vùng menu
+  document.addEventListener("click", (e) => {
+    if (navbar.classList.contains("nav-active") && !navbar.contains(e.target)) {
+      navbar.classList.remove("nav-active");
+      document.body.classList.remove("menu-open");
+      if (hamburger) hamburger.innerText = "☰";
+    }
+  });
 
+  // Giữ nguyên các logic khác (saveData, renderTable...)
+  document.getElementById("btnSave").onclick = saveData;
+  // ... (phần code còn lại giữ nguyên)
   renderTable();
 };

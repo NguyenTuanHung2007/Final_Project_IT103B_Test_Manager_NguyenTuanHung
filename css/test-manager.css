@@ -324,23 +324,14 @@ footer {
 
 /* 9. Responsive cho Mobile */
 @media (max-width: 768px) {
-  .navbar {
-    padding: 12px 0;
-    position: relative;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
+  /* Hamburger */
   .hamburger {
     display: block;
-    order: 3;
-    flex-shrink: 0;
   }
 
+  /* Nav Links Mobile */
   .nav-links {
-    display: none;
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -350,36 +341,41 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    padding: 20px;
-    z-index: 999;
-    transform: translateX(-100%);
+    gap: 25px;
+    z-index: 1000;
+
+    /* Hiệu ứng trượt và ẩn hiện mượt mà */
+    transform: translateY(-100%);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Khi menu được mở */
   .navbar.nav-active .nav-links {
-    display: flex;
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .nav-links a {
     margin-left: 0;
-    font-size: 18px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    width: 200px;
+    font-size: 20px;
+    padding: 15px;
+    width: 80%;
     text-align: center;
-  }
-
-  .nav-links a:hover {
-    transform: scale(1.05);
-    background-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   body.menu-open {
     overflow: hidden;
+  }
+
+  /* Bảng dữ liệu dạng thẻ (Card) */
+  .table-container {
+    border: none;
   }
 
   thead {
@@ -390,7 +386,9 @@ footer {
     display: block;
     margin-bottom: 20px;
     border: 1px solid #dee2e6;
+    border-radius: 8px;
     background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
 
   td {
@@ -400,20 +398,33 @@ footer {
     border: none;
     border-bottom: 1px solid #f1f1f1;
     text-align: right;
-    padding: 10px 15px;
+    padding: 12px 15px;
   }
 
   td::before {
     content: attr(data-label);
     font-weight: 700;
     color: #666;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
+    text-align: left;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  .action-group {
+    justify-content: flex-end;
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .logo {
     font-size: 18px;
+  }
+  h1 {
+    font-size: 26px;
   }
 }
