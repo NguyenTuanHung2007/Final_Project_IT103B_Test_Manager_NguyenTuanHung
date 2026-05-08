@@ -233,17 +233,23 @@ const saveTest = () => {
 
   const index = allTests.findIndex((t) => t.id == testId);
   if (index !== -1) {
-    // Cập nhật thông tin bài test vào danh sách tổng
+    // 1. Cập nhật thông tin bài test
     allTests[index] = {
       ...allTests[index],
       name,
       category,
-      time: timeVal,
+      time: timeVal, // Đây là thời gian mới (VD: 1 phút)
       questions: questions.length,
       image: currentImage,
     };
+
+    // 2. LƯU Ý: Xóa mốc thời gian cũ trong LocalStorage để người chơi phải nhận thời gian mới
+    localStorage.removeItem(`testEndTime_${testId}`);
+    localStorage.removeItem(`testDurationUsed_${testId}`);
+
     localStorage.setItem("tests", JSON.stringify(allTests));
-    saveToLocalStorage(); // Lưu chi tiết các câu hỏi
+    saveToLocalStorage();
+
     createToast("success", "Cập nhật bài test thành công!");
     setTimeout(() => {
       window.location.href = "./test-manager.html";

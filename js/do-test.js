@@ -66,30 +66,41 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
 
-    // Thiết lập các khóa lưu trữ
     answersStorageKey = `userAnswers_${testId}`;
     endTimeStorageKey = `testEndTime_${testId}`;
+    // Khóa mới để theo dõi xem Admin có sửa thời gian không
+    const durationUsedKey = `testDurationUsed_${testId}`;
 
     userAnswers = JSON.parse(localStorage.getItem(answersStorageKey) || "{}");
 
-    // LOGIC THỜI GIAN QUAN TRỌNG:
     const storedEndTime = localStorage.getItem(endTimeStorageKey);
+    const storedDuration = localStorage.getItem(durationUsedKey);
+    const currentDuration = currentTest.time.toString(); // Thời gian hiện tại trong DB
     const now = Date.now();
 
-    if (storedEndTime) {
-      // Nếu đã có mốc kết thúc (do F5 hoặc đang làm dở)
-      timeLeftMs = parseInt(storedEndTime) - now;
-      if (timeLeftMs <= 0) {
-        timeLeftMs = 0;
-        alert("Thời gian làm bài đã hết!");
-        // Tự động tính điểm luôn nếu hết hạn
-      }
-    } else {
-      // Nếu là lần đầu tiên vào làm bài
-      const durationMs = (parseInt(currentTest.time) || 10) * 60 * 1000;
+    // KIỂM TRA: Nếu đã có mốc thời gian cũ NHƯNG thời lượng bài test đã bị Admin thay đổi
+    if (storedEndTime && storedDuration !== currentDuration) {
+      console.log(
+        "Phát hiện Admin đã thay đổi thời gian bài test. Reset đồng hồ.",
+      );
+      localStorage.removeItem(endTimeStorageKey);
+      // Coi như lần đầu vào làm bài với thời gian mới
+      const durationMs = (parseInt(currentDuration) || 10) * 60 * 1000;
       timeLeftMs = durationMs;
-      const newEndTime = now + durationMs;
-      localStorage.setItem(endTimeStorageKey, newEndTime.toString());
+      localStorage.setItem(endTimeStorageKey, (now + durationMs).toString());
+      localStorage.setItem(durationUsedKey, currentDuration);
+    }
+    // Nếu mốc thời gian khớp và hợp lệ (F5 bình thường)
+    else if (storedEndTime) {
+      timeLeftMs = parseInt(storedEndTime) - now;
+      if (timeLeftMs <= 0) timeLeftMs = 0;
+    }
+    // Nếu là lần đầu tiên làm bài
+    else {
+      const durationMs = (parseInt(currentDuration) || 10) * 60 * 1000;
+      timeLeftMs = durationMs;
+      localStorage.setItem(endTimeStorageKey, (now + durationMs).toString());
+      localStorage.setItem(durationUsedKey, currentDuration);
     }
 
     return true;
@@ -211,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.backToHome = () => {
     localStorage.removeItem(answersStorageKey);
     localStorage.removeItem(endTimeStorageKey);
+    localStorage.removeItem(`testDurationUsed_${testId}`); // Thêm dòng này
     window.location.href = "./home.html";
   };
 
